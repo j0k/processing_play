@@ -4,11 +4,15 @@ import java.util.Comparator;
 PImage img;
 int ybase = 55;
 
+ImagePlastic vasa;
+
 void setup(){
   size(500,500);
   noFill();
   
   img = loadImage("tusion_logo.png");
+  
+  vasa = new ImagePlastic(img,img_x,img_y,img_width,img_height,100);
   bounds = new ArrayList<PointBound>();
   vasaCenX = img_x + img_width/2;
 }
@@ -22,14 +26,22 @@ int img_x=10, img_y=10, img_width=410, img_height=410;
 boolean speed_balance = false;
 boolean bounds_balance = false;
 void draw(){
+  
+  background(255);
   color c = color(255, 204, 0);
   color(c);
   
-  image(img, img_x, img_y, img_width, img_height);
+  vasa.draw();
+  vasa.update();
+  vasa.loop();
+  noTint();
+  //image(img, img_x, img_y, img_width, img_height);
   stroke(c); 
   
   //draw_arc_line();
   
+  //fill(255 - vasa.oppacity);
+  noFill();
   for(int i =0; i<bounds.size();i++)
     {
       bounds.get(i).draw();
