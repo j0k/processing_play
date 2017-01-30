@@ -1,18 +1,23 @@
+import java.util.Collections;
+import java.util.Comparator;
+
 PImage img;
 int ybase = 55;
 
 void setup(){
-  size(400,400);
+  size(500,500);
   noFill();
   
   img = loadImage("tusion_logo.png");
   bounds = new ArrayList<PointBound>();
+  vasaCenX = img_x + img_width/2;
 }
 
 int xcen_left=80, xcen_right=140;
-int ycen=120;
+int ycen=210;
+int vasaCenX;
 
-int img_x=10, img_y=10, img_width=200, img_height=200;
+int img_x=10, img_y=10, img_width=410, img_height=410;
 
 boolean speed_balance = false;
 boolean bounds_balance = false;
@@ -23,7 +28,7 @@ void draw(){
   image(img, img_x, img_y, img_width, img_height);
   stroke(c); 
   
-  draw_arc_line();
+  //draw_arc_line();
   
   for(int i =0; i<bounds.size();i++)
     {
@@ -76,12 +81,10 @@ PointBound add_arc(int xcen, int ycen, int w, int h, float step){
   return pb;
 }
 
-
 float t=0;
 void mousePressed() {
-  
   println("x = " + mouseX + " ; y = " + mouseY);
-  bounds.add(add_arc(110, mouseY, abs(110-mouseX)*2, abs(110-mouseX)*2/3, random(0.10)));
+  bounds.add(add_arc(vasaCenX, mouseY, abs(vasaCenX-mouseX)*2, abs(vasaCenX-mouseX)*2/3, random(0.10)));
 }
 
 float avg_speed = 0;
@@ -102,7 +105,7 @@ void start_speed_relax(){
   
   for(int i =0; i<bounds.size();i++)
     {
-      bounds.get(i).step = to_speed(avg_speed, avg_speed - bounds.get(i).step, 0.000001);
+      bounds.get(i).step = to_speed(avg_speed, avg_speed - bounds.get(i).step, 0.00001);
       //bounds.get(i).update();
     }
 }
@@ -157,8 +160,17 @@ void keyReleased()
        bounds_balance = true;
     } else if (keyCode == LEFT) {
       set_width_stroke(4);
-    }
+    } 
   }
+  if (key == 'b') {
+    AddRandArcs(10);
+    print("b");
+  } else
+  if (key == 'd') {
+    RemoveRandArcs(5);
+    print("d");
+  }
+  
 }
 
 void exit() {
