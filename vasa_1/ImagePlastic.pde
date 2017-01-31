@@ -8,16 +8,23 @@ class ImagePlastic {
   
   void draw(){
     tint(255, oppacity);
-    image(img, img_x, img_y, img_width, img_height);
+    if (oppacity!=0)
+      image(img, img_x, img_y, img_width, img_height);
   }
   
   boolean updated = false;
+  
+  boolean firstTimeRun = true;
   void update(){
     time = millis();
+    if (firstTimeRun){
+      lastOppacityChangeTime = time;
+      firstTimeRun = false;
+    }
     
     float dt = time - lastOppacityChangeTime;
     
-    print("\n + a:" + appearing + " disa:" +disappearing + "  " + time + " dt:" +dt + " op:"+ this.oppacity+"\n");
+    //print("\n + a:" + appearing + " disa:" +disappearing + "  " + time + " dt:" +dt + " op:"+ this.oppacity+"\n");
     if (disappearing){
       int opp = setTranspPerSec(dt);
       oppacity = oppacity - opp;
@@ -44,8 +51,8 @@ class ImagePlastic {
     
     if (updated){
       updated = false;
-      lastOppacityChangeTime = time;
     }
+    lastOppacityChangeTime = time;
   }
   
   ImagePlastic (PImage img, int x, int y, int w, int h, float tPS){
@@ -59,7 +66,6 @@ class ImagePlastic {
   
   int setTranspPerSec(float dtime){
     float opp = (dtime/1000) * transpPerSec;
-    print("OPP: " + opp);
     return (int) opp;
     // 1000 ms = 1 sec
   }

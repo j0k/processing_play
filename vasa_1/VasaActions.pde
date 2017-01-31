@@ -13,7 +13,7 @@ void AddRandArcs(int c){
       int x = (int) (scale * LeftBoundX[row]);
       int cenX = (int) (defW/2 * scale);
     
-      bounds.add(add_arc(img_x + cenX, img_y + y, abs(cenX-x)*2, abs(cenX-x)*2/3, random(0.10)));
+      bounds.add(add_arc(img_x + cenX, img_y + y, abs(cenX-x)*2, abs(cenX-x)*2/3, random(0.010)));
     } else i --;
     //bounds.add(add_arc(vasaCenX, x, abs(vasaCenX-mouseX)*2, abs(vasaCenX-mouseX)*2/3, random(0.10)));
   }

@@ -1,18 +1,27 @@
 import java.util.Collections;
 import java.util.Comparator;
 
-PImage img;
+PImage img, imgLF, imgRF, imgWhite;
 int ybase = 55;
 
-ImagePlastic vasa;
+float A = 100, M = 100;
+ImagePlastic vasa, leftFace, rightFace, vasaWhite;
+StageController stage;
 
 void setup(){
   size(500,500);
   noFill();
   
+  stage = new StageController(); 
   img = loadImage("tusion_logo.png");
+  imgWhite = loadImage("tusion_logo_white.png");
+  imgLF = loadImage("leftFace.png");
+  imgRF = loadImage("rightFace.png");
   
   vasa = new ImagePlastic(img,img_x,img_y,img_width,img_height,100);
+  leftFace = new ImagePlastic(imgLF,img_x,img_y,img_width,img_height,200);
+  rightFace = new ImagePlastic(imgRF,img_x,img_y,img_width,img_height,200);
+  
   bounds = new ArrayList<PointBound>();
   vasaCenX = img_x + img_width/2;
 }
@@ -25,27 +34,29 @@ int img_x=10, img_y=10, img_width=410, img_height=410;
 
 boolean speed_balance = false;
 boolean bounds_balance = false;
+
 void draw(){
-  
   background(255);
   color c = color(255, 204, 0);
   color(c);
   
-  vasa.draw();
-  vasa.update();
-  vasa.loop();
-  noTint();
+  stage.draw();
+  stage.update();
+  
+
+  //vasa.loop();
+  //noTint();
   //image(img, img_x, img_y, img_width, img_height);
   stroke(c); 
   
-  //draw_arc_line();
   
   //fill(255 - vasa.oppacity);
-  noFill();
+  //noFill();
   for(int i =0; i<bounds.size();i++)
     {
       bounds.get(i).draw();
       bounds.get(i).update();
+      bounds.get(i).c = color(vasa.oppacity);
     }
     
  if (speed_balance){
@@ -88,6 +99,7 @@ PointBound add_arc(int xcen, int ycen, int w, int h, float step){
   pb.b2 = HALF_PI;
   pb.step = step;
   pb.c = color(round(random(255)), round(random(255)), round(random(255)));
+  pb.c = color(255, 255, 255);
   pb.sw = round(1+random(1));
   
   return pb;
@@ -112,7 +124,10 @@ void start_speed_relax(){
     
     speed = speed / bounds.size();
     print(speed + "-sp-");
+    if(speed<0)
+      speed = - speed;
     avg_speed = speed;
+    
   }
   
   for(int i =0; i<bounds.size();i++)
@@ -161,18 +176,35 @@ void set_width_stroke(int sw){
   }
 }
 
+float setVal(float p, float add, float def){
+  float newVal = p+add;
+  
+  if (def<=0){
+    if (newVal<def)
+      return def;
+    else return newVal;
+  } else
+  if (def>=100)
+    if (newVal>=def)
+      return def;
+    else return newVal;
+  
+  return def;
+}
 
 void keyReleased()
 {
   if (key == CODED) {
     if (keyCode == UP) {
-      speed_balance = true;
-      print("UP");   
+      A = setVal(A,10,100);
     } else if (keyCode == DOWN) {
-       bounds_balance = true;
+      A = setVal(A,-10,0);
     } else if (keyCode == LEFT) {
-      set_width_stroke(4);
-    } 
+      M = setVal(M,-10,0);
+    } else if (keyCode == RIGHT) {
+      M = setVal(M,10,100);
+    }
+    print ("A:"+A + " M:"+M + "\n");
   }
   if (key == 'b') {
     AddRandArcs(10);
@@ -181,7 +213,41 @@ void keyReleased()
   if (key == 'd') {
     RemoveRandArcs(5);
     print("d");
+  } else
+  if (key == 's') {
+    speed_balance = true;    
+  } else
+  if (key == 'S') {
+    speed_balance = false;    
+  } else
+  if (key == 'a') {
+    bounds_balance = true;    
+  } else
+  if (key == 'A') {
+    bounds_balance = false;    
+  } else
+  if (key == 'f') {
+    set_width_stroke(4);    
+  } else
+  if (key == '1') {
+    stage.toStage = 1;    
+  } else
+  if (key == '2') {
+    stage.toStage = 2;    
+  } else
+  if (key == '3') {
+    stage.toStage = 3;    
+  } else
+  if (key == '4') {
+    stage.toStage = 4;    
+  } else
+  if (key == '5') {
+    stage.toStage = 5;    
+  } else
+  if (key == '6') {
+    stage.toStage = 6;    
   }
+  
   
 }
 

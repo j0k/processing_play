@@ -35,10 +35,11 @@ class PointBound implements Comparable<PointBound> {
   // compare
   // http://stackoverflow.com/questions/18441846/how-to-sort-an-arraylist-in-java
   @Override
-  public int compareTo(PointBound pb) {
+  public int compareTo(final PointBound pb) {    
     if (this.ycen < pb.ycen)
-      return 0;
-    else 
       return 1;
+    else 
+      return -1;
+
   }
 }
