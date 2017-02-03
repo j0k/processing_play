@@ -5,9 +5,14 @@ PImage img, imgLF, imgRF, imgWhite;
 int ybase = 55;
 
 float A = 50, M = 50;
+
+Smoother attSm = new Smoother(), medSm = new Smoother();
+SmootherTimer arcsAdding;
+
 ImagePlastic vasa, leftFace, rightFace, vasaWhite;
 StageController stage;
 EEGEmulator eeg = new EEGEmulator();
+ScreenNotification notify = new ScreenNotification();
 
 void setup(){
   size(500,500);
@@ -24,6 +29,8 @@ void setup(){
   rightFace = new ImagePlastic(imgRF,img_x,img_y,img_width,img_height,200);
   
   bounds = new ArrayList<PointBound>();
+  arcsAdding = new SmootherTimer(30, 2, 0, 100, 1); // we need only second param and last param here
+  
   vasaCenX = img_x + img_width/2;
 }
 
@@ -40,6 +47,9 @@ void draw(){
   eeg.update(A,M);
   A = eeg.A;
   M = eeg.M;
+  
+  attSm.addV(A);
+  medSm.addV(M);
   
   background(255);
   color c = color(255, 204, 0);
@@ -77,6 +87,7 @@ void draw(){
    
    print("LEVEL CHANGED ! " + "A:"+A + " M:"+ M + " - " + stage.level + "\n");
  }
+ notify.draw();
 }
 
 ArrayList<PointBound> bounds;

@@ -110,6 +110,8 @@ class StageController{
           highAttThreshold += 5;
           if (highAttThreshold>100)
             highAttThreshold = 100;
+            
+          arcsAdding.changeStartEndV(0, highAttThreshold );
           level += 1;
           levelChanged = true;
         }
@@ -118,6 +120,8 @@ class StageController{
           highMedThreshold += 5;
           if (highMedThreshold > 100)
             highMedThreshold = 100;
+            
+          arcsAdding.changeStartEndV(M, 10);
           level += 1;
           levelChanged = true;
         }
@@ -125,6 +129,7 @@ class StageController{
     
     if (levelChanged)
     {
+      notify.addText("Level: " + str(this.level) + "!");
       AttTimer.refresh();
       MedTimer.refresh();
     }
@@ -132,6 +137,18 @@ class StageController{
     if (levelChanged)
     {
       vasa.reverseAppearing();
+      
+      if (level >= 4){ // 4,6,8
+        if (vasa.appearing){
+          // HERE WE NEED A PARAMS for speed and details!!!
+          leftFace.startAppear();
+          rightFace.startAppear();
+        } else {
+          leftFace.startDisapper();
+          rightFace.startDisapper();
+        }
+      }
+      
     }
     
     return levelChanged;

@@ -27,7 +27,7 @@ void AddRandArcs(int c){
 void RemoveRandArcs(int c){
   int i = 0;
   while ((bounds.size() > 0) && (i<c)){
-    bounds.remove(0);
+    bounds.remove((int) random(bounds.size()));
     i++;
   }
 }

@@ -10,6 +10,13 @@ class ActionTimer{
     this.liveTimeStart = millis();
   }
   
+  ActionTimer(float dt, float liveTimeMax){
+    this.duration = dt;
+    this.liveTimeMax = liveTimeMax;
+    this.lastTime = millis();
+    this.liveTimeStart = millis();
+  }
+  
   boolean itsDurationEnough(float time){
     if (time - lastTime > duration){
       livetime += (time - lastTime);
@@ -33,5 +40,12 @@ class ActionTimer{
     } else return false;
   }
   
-  
+  float toCountOver(float c){
+    if ( liveTimeMax != -1){
+      if (millis() - liveTimeStart > liveTimeMax){
+        return c;
+      } else return c * (millis() - liveTimeStart)/ (liveTimeMax);
+    }
+    return 0;
+  }
 }
