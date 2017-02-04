@@ -111,7 +111,7 @@ class StageController{
           if (highAttThreshold>100)
             highAttThreshold = 100;
             
-          arcsAdding.changeStartEndV(0, highAttThreshold );
+          //arcsAdding.changeStartEndV(0, highAttThreshold );
           level += 1;
           levelChanged = true;
         }
@@ -121,7 +121,7 @@ class StageController{
           if (highMedThreshold > 100)
             highMedThreshold = 100;
             
-          arcsAdding.changeStartEndV(M, 10);
+          //arcsAdding.changeStartEndV(M, 10);
           level += 1;
           levelChanged = true;
         }

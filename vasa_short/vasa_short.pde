@@ -29,7 +29,7 @@ void setup(){
   rightFace = new ImagePlastic(imgRF,img_x,img_y,img_width,img_height,200);
   
   bounds = new ArrayList<PointBound>();
-  arcsAdding = new SmootherTimer(30, 2, 0, 100, 1); // we need only second param and last param here
+  //arcsAdding = new SmootherTimer(30, 2, 0, 100, 1); // we need only second param and last param here
   
   vasaCenX = img_x + img_width/2;
 }

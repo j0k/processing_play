@@ -8,45 +8,73 @@ class ValueSmoother{
   float curV;
   float realV;
   
-  float maxRealVPerSec;
+  float maxRealVPerSec, msPerUp;
   
-  ValueSmoother(float startV, float endV, float startRealV, float endRealV, float maxRealVPerSec){
+  ValueSmoother(float startV, float endV, float startRealV, float endRealV, float maxRealVPerSec, float msPerUp){
     this.startRealV = startRealV;
     this.endRealV = endRealV;
     this.startV = startV;
     this.endV = endV;
     this.maxRealVPerSec = maxRealVPerSec;
+    this.msPerUp = msPerUp;
   }
   
   void addV(float v){
     coords.add(v);
   }
   
-  float lasttime;
+  float lasttime, lasttime_micro;
   float realVtmp;
   
-  float getVUp(){
+  float getV(){
+    float time = millis() - lasttime;
+    float r;
+    if (time >= msPerUp){
+      r = getVChanged();
+    } else {
+      r = getVMicro();
+    }
+    
+    return r;
+  }
+  
+  float getVMicro(){
+    float time = millis() - lasttime_micro;
+    
+    if (abs(realVtmp - realV) > maxRealVPerSec * (time/1000)){
+      realV = toV(realV, between(realVtmp, startRealV, endRealV), maxRealVPerSec * (time/1000)); //sign(realVtmp) * maxRealVPerSec * (time/1000);
+      println("@@"+realV + "--"+realVtmp+"**"+time);
+    } else {
+      realV = realVtmp;
+    }
+    
+    lasttime_micro = millis();
+    return realV;
+  }
+    
+  float getVChanged(){
     float time = millis() - lasttime;
     
     curV = coords.getV(); // it's
     curV = between(curV, startV, endV);
     
     float vMap = map(curV, startV, endV, startRealV, endRealV);
-    
+  
     realVs.add(vMap);
     
     
     realVtmp = realVs.getV();
     
-    if (abs(realVtmp - realV) > maxRealVPerSec * (time/1000)){
-      realV = toV(realV, between(realVtmp, startRealV, endRealV), maxRealVPerSec * (time/1000)); //sign(realVtmp) * maxRealVPerSec * (time/1000);
-      println("@@"+realV);
-    } else {
-      realV = realVtmp;
-    }
+    //if (abs(realVtmp - realV) > maxRealVPerSec * (time/1000)){
+    //  realV = toV(realV, between(realVtmp, startRealV, endRealV), maxRealVPerSec * (time/1000)); //sign(realVtmp) * maxRealVPerSec * (time/1000);
+    //  println("@@"+realV);
+    //} else {
+    //  realV = realVtmp;
+    // }
     
     //realV = between(realV, startRealV, endRealV);
-    lasttime = time;
+    lasttime = millis();
+    //lasttime_micro = lasttime;
     return realV;
     
   }
