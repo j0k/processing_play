@@ -35,11 +35,13 @@ class ValueSmoother{
     float realVtmp = realVs.getV();
     println("##"+realVtmp);
     if (abs(realVtmp - realV) > maxRealVPerSec * (time/1000)){
-      realV = sign(realVtmp) * maxRealVPerSec * (time/1000);
+      realV = toV(realV, between(realVtmp, startRealV, endRealV), maxRealVPerSec * (time/1000)) ;//sign(realVtmp) * maxRealVPerSec * (time/1000);
       println("@@"+realV);
+    } else {
+      realV = realVtmp;
     }
      
-    realV = between(realV, startRealV, endRealV);
+    //realV = between(realV, startRealV, endRealV);
     lasttime = time;
     return realV;
     
@@ -62,13 +64,7 @@ class ValueSmoother{
     }
   }
   
-  float sign(float v){
-    if (v == 0)
-      return v;
-    else
-      return abs(v)/v;
-  }
-  
+ 
   void printIt(){
     
     
