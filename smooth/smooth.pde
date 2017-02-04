@@ -1,6 +1,6 @@
 ValueSmoother sm;
 void setup(){
-  sm = new ValueSmoother(0, 100, 0, 300, 1);
+  sm = new ValueSmoother(0, 100, 0, 300, 5);
 }
 
 float lastT = millis(), dt = 300;
@@ -34,4 +34,13 @@ void keyReleased()
     }
     print ("A:"+A + " M:"+M + "\n");
   }
+  
+  if (key == 'b') {
+    sm.changeStartEndV(0,100,0,100);
+    print("b");
+  } else
+  if (key == 'd') {
+    sm.changeStartEndV(0,100,0,300);
+    print("d");
+  } 
 }

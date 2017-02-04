@@ -30,14 +30,16 @@ class ValueSmoother{
     curV = between(curV, startV, endV);
     
     float vMap = map(curV, startV, endV, startRealV, endRealV);
-    print(vMap +"@");
+    
     realVs.add(vMap);
+    
+    
     float realVtmp = realVs.getV();
-    println("##"+realVtmp);
+    
     if (abs(realVtmp - realV) > maxRealVPerSec * (time/1000)){
       realV = sign(realVtmp) * maxRealVPerSec * (time/1000);
-      println("@@"+realV);
-    }
+      
+    } else { realV = realVtmp; }
      
     realV = between(realV, startRealV, endRealV);
     lasttime = time;
@@ -68,6 +70,14 @@ class ValueSmoother{
     else
       return abs(v)/v;
   }
+  
+  void changeStartEndV(float startV, float endV, float startRealV, float endRealV){
+    this.startV = startV;
+    this.endV = endV;
+    this.startRealV = startRealV;
+    this.endRealV = endRealV;
+  }
+  
   
   void printIt(){
     
