@@ -23,6 +23,8 @@ class StageController{
   }
   
   void update(){
+     balanceArcsC();
+    
      switch(toStage){
       case 1:{
         stageAtt1();
@@ -103,8 +105,20 @@ class StageController{
   int highMedThreshold=50, highAttThreshold=50;
   
   ActionTimer AttTimer = new ActionTimer(1000), MedTimer = new ActionTimer(1000);
+  
+  boolean focusFace(){
+    return (level%2 != 0);
+  }
+  
+  boolean focusVase(){
+    return (level%2 == 0);
+  }
+  
+  float levelSpeed = 0.02;
+  int maxArcs = 100;
+  boolean influenceOppacity = true;
   boolean nextLevel(float A, float M){
-    if (level%2 == 0){
+    if (focusVase()){
       // levels; 0,2,4,6,8,10
         if ((A >= highAttThreshold) && (AttTimer.itsDurationEnough())){
           highAttThreshold += 5;
@@ -114,6 +128,7 @@ class StageController{
           //arcsAdding.changeStartEndV(0, highAttThreshold );
           level += 1;
           levelChanged = true;
+          
         }
     } else {
       if ((M >= highMedThreshold) && (MedTimer.itsDurationEnough())){
@@ -124,22 +139,46 @@ class StageController{
           //arcsAdding.changeStartEndV(M, 10);
           level += 1;
           levelChanged = true;
+          
+          // VASA appearing!
+          
+          //          arcs.active = true;
+          //arcs.changeStartEndV(0, highAttThreshold, 0, highAttThreshold * 2);
         }
     }
     
+    arcs.active = true;
+    
     if (levelChanged)
     {
+      String message = "";
       notify.addText("Level: " + str(this.level) + "!");
       AttTimer.refresh();
       MedTimer.refresh();
+      if (focusFace()){
+        message = "Clear your mind, clear Vase. Try to see faces...";
+        arcs.changeStartEndV(0,highMedThreshold*2/3, arcs.realV, 0);
+      } else {
+        arcs.changeStartEndV((highAttThreshold/5), highAttThreshold, 0, maxArcs * 2);
+        message = "Focus on Vase. Try to see faces!";
+      }
+      notify.addText(message, (int) random(width/1.75), 1);
+      print(message+"!"+"\n");
+      
     }
     
     if (levelChanged)
     {
-      vasa.reverseAppearing();
+      if (focusFace())
+        vasa.startAppear();
+      else
+        // focusVasa()
+        vasa.startDisapper();
+      
       
       if (level >= 4){ // 4,6,8
-        if (vasa.appearing){
+        
+        if ((vasa.appearing) && focusFace()){
           // HERE WE NEED A PARAMS for speed and details!!!
           leftFace.startAppear();
           rightFace.startAppear();
@@ -149,6 +188,20 @@ class StageController{
         }
       }
       
+      if (level >= 6){ // 4,6,8
+        levelSpeed = 0.02 * ((level - 4)/2);
+      }
+      
+      if (level >= 10){ // 4,6,8
+        influenceOppacity = false;
+        colorizing = true;
+      }
+      
+      if (level >= 12){
+        strokeWeight = 2;
+      }
+      
+      maxArcs = 50+100*(level/2);
     }
     
     return levelChanged;

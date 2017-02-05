@@ -5,7 +5,7 @@ void setup(){
   size(800,400);
 }
 
-float lastT = millis(),lastTS = millis(), dt = 3;
+float lastT = millis(),lastTS = millis(), dt = 100;
 
 int x = 0;
 color c1,c2,c3;
@@ -34,13 +34,13 @@ void draw(){
   
   
   stroke(c3);
-  line(x, 10+sm.realV -30, x, 10+sm.realV + 30);
+  line(x, 10 + sm.realV - 30, x, 10 + sm.realV + 30);
   stroke(c1);
-  line(x, 10+sm.realV -10, x, 10+sm.realV + 10);
+  line(x, 10 + sm.realV - 10, x, 10 + sm.realV + 10);
   stroke(c2);
-  point(x, 10+sm.realV);
+  point(x, 10 + sm.realV);
   x ++;
-  if (x>width) x = 0;
+  if (x > width) x = 0;
   
 }
 

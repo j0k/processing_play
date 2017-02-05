@@ -3,8 +3,9 @@ class PointBound implements Comparable<PointBound> {
   public float b1, b2;
   public int w,h,ycen,xcen;
   public color c;
-  public int sw=1; //strokeWeight
-  public float step=0.01;
+  public int sw=strokeWeight; //strokeWeight
+  public float stepdef=0.02;
+  public float step=0.02;
   
   public void draw(){
     stroke(this.c);
@@ -42,4 +43,26 @@ class PointBound implements Comparable<PointBound> {
       return -1;
 
   }
+}
+
+color pbDefColor = color(0,0,0);
+boolean colorizing = false;
+int strokeWeight = 1;
+PointBound add_arc(int xcen, int ycen, int w, int h, float step){
+  
+  PointBound pb = new PointBound();
+  pb.xcen = xcen;
+  pb.ycen = ycen;
+  pb.w = w;
+  pb.h = h;
+  pb.b1 = 0;
+  pb.b2 = HALF_PI;
+  pb.step = step;
+  if (colorizing)
+    pb.c = color(round(random(255)), round(random(255)), round(random(255)));
+  else
+    pb.c = pbDefColor;
+  pb.sw = round(1+random(1));
+  
+  return pb;
 }
