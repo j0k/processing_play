@@ -65,14 +65,7 @@ class ValueSmoother{
     
     realVtmp = realVs.getV();
     
-    //if (abs(realVtmp - realV) > maxRealVPerSec * (time/1000)){
-    //  realV = toV(realV, between(realVtmp, startRealV, endRealV), maxRealVPerSec * (time/1000)); //sign(realVtmp) * maxRealVPerSec * (time/1000);
-    //  println("@@"+realV);
-    //} else {
-    //  realV = realVtmp;
-    // }
-    
-    //realV = between(realV, startRealV, endRealV);
+
     lasttime = millis();
     //lasttime_micro = lasttime;
     return realV;

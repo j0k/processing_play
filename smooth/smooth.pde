@@ -67,7 +67,7 @@ void keyReleased()
     print("b");
   } else
   if (key == 'd') {
-    sm.changeStartEndV(0,100,0,300);
+    sm.changeStartEndV(40,100,0,300);
     print("d");
   } 
 }
