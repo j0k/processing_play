@@ -198,7 +198,7 @@ class StageController{
       }
       
       if (level >= 12){
-        strokeWeight = 2;
+        strokeWeight = 4;
       }
       
       maxArcs = 50+100*(level/2);

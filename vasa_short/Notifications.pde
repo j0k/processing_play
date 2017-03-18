@@ -37,8 +37,8 @@ class ScreenNotification{
   }
 
   void addText(String str, int x, int t){
-    notes.add(new Note(str,x,t));
-    timer.add(new ActionTimer(20,3000));
+    //notes.add(new Note(str,x,t));
+    //timer.add(new ActionTimer(20,3000));
   }
 }
 

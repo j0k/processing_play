@@ -16,7 +16,7 @@ ScreenNotification notify = new ScreenNotification();
 
 
 void setup(){
-  size(500,500);
+  size(800,500);
   noFill();
 
   stage = new StageController();
@@ -39,7 +39,7 @@ int xcen_left=80, xcen_right=140;
 int ycen=210;
 int vasaCenX;
 
-int img_x=10, img_y=10, img_width=410, img_height=410;
+int img_x=200, img_y=10, img_width=410, img_height=410;
 
 boolean speed_balance = false;
 boolean bounds_balance = false;
@@ -71,8 +71,8 @@ void draw(){
   stroke(c);
 
 
-  //fill(255 - vasa.oppacity);
-  noFill();
+  fill(255 - vasa.oppacity);
+  //noFill();
   for(int i =0; i<bounds.size();i++)
     {
       bounds.get(i).draw();
