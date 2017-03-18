@@ -8,7 +8,7 @@ class Smoother{
     }
   }
   
-  float addV(float V){
+  float add(float V){
     for(int i=1;i<v.length;i++){
       v[i-1] = v[i];
     }
@@ -25,101 +25,108 @@ class Smoother{
   }
 }
 
-class SmootherTimer extends ActionTimer{
-  // bad design. rlly ActionTimer and Smoother are different
-  SmootherTimer(float dt, float speed, float startV, float resStartV, float resEndV, float endV, int smoothType){
-    super(dt);
-    this.vPerSec = speed; // speed of curV change [or vPerVal]
+class ValueSmoother{
+  Smoother coords = new Smoother();
+  Smoother realVs = new Smoother();
+  
+  float startV, endV;
+  float startRealV, endRealV;
+  
+  float curV;
+  float realV;
+  
+  float maxRealVPerSec, msPerUp;
+  
+  ValueSmoother(float startV, float endV, float startRealV, float endRealV, float maxRealVPerSec, float msPerUp){
+    this.startRealV = startRealV;
+    this.endRealV = endRealV;
     this.startV = startV;
     this.endV = endV;
-    this.smoothType = smoothType;
-    this.curV = startV;
-    this.resStartV = resStartV;
-    this.resEndV = resEndV;
+    this.maxRealVPerSec = maxRealVPerSec;
+    this.msPerUp = msPerUp;
   }
   
-  void changeStartEndV(float startV, float endV){
-    this.startV = startV;
-    this.endV = endV;
+  void addV(float v){
+    coords.add(v);
   }
   
-  void changeStartEndV(float startV, float endV, float resStartV, float resEndV){
-    this.startV = startV;
-    this.endV = endV;
-    this.resStartV = resStartV;
-    this.resEndV = resEndV;
-  }
+  float lasttime, lasttime_micro;
+  float realVtmp;
   
-  float vPerSec, startV, endV, curV;
-  float resStartV, resEndV;
-  
-  int smoothType;
-  
-  float sign(float v){
-    if (v == 0)
-      return v;
-    else
-      return abs(v)/v;
-  }
-  
-  float toSeekV(){
-    float time = millis();
-    switch(smoothType){
-      case 1:{ //linear
-        float dV = (time - lastTime) * vPerSec;
-        
-        if ((startV <= curV) && (curV < endV)){
-          curV += dV;
-          if (curV >endV)
-            curV = endV;
-        } else
-        if ((startV >= curV) && (curV > endV)){
-          curV -= dV;
-          if (curV <endV)
-            curV = endV;
-        } else
-          curV -= sign(startV - curV) * dV; 
-        
-          return curV;
-        //break;
+  boolean active = true;
+  float getV(){
+    float r = 0;
+    if (active){
+      float time = millis() - lasttime;
+      if (time >= msPerUp){
+        r = getVChanged();
+      } else {
+        r = getVMicro();
       }
-      default:
-        
-        break;
     }
-    return 0;
+    return r;
   }
   
-  float toSeekV(float realV){ // realV is not curV. realV it's Attention of Meditation
-    float vPerVal = vPerSec;
+  float getVMicro(){
+    float time = millis() - lasttime_micro;
     
-    switch(smoothType){
-      case 1:{ //linear
-        //float dV = (realV - endV) * vPerVal;
-        float dV = (resStartV - resEndV) * vPerVal;
-        
-        if ((startV <= realV) && (realV < endV)){
-          curV += dV;
-          if (curV >endV)
-            curV = endV;
-        } else
-        if ((startV >= realV) && (realV > endV)){
-          curV -= dV;
-          if (curV <endV)
-            curV = endV;
-        } else
-          curV -= sign(startV - curV) * dV; 
-        
-          return curV;
-        //break;
-      }
-      default:
-        
-        break;
+    if (abs(realVtmp - realV) > maxRealVPerSec * (time/1000)){
+      realV = toV(realV, between(realVtmp, startRealV, endRealV), maxRealVPerSec * (time/1000)); //sign(realVtmp) * maxRealVPerSec * (time/1000);
+      //println("@@"+realV + "--"+realVtmp+"**"+time);
+    } else {
+      realV = realVtmp;
     }
-    return 0;
+    
+    lasttime_micro = millis();
+    return realV;
+  }
+    
+  float getVChanged(){
+    float time = millis() - lasttime;
+    
+    curV = coords.getV(); // it's
+    curV = between(curV, startV, endV);
+    
+    float vMap = map(curV, startV, endV, startRealV, endRealV);
+  
+    realVs.add(vMap);
+    
+    
+    realVtmp = realVs.getV();
+    
+
+    lasttime = millis();
+    //lasttime_micro = lasttime;
+    return realV;
+    
   }
   
+  float between(float v,float  vLeft,float vRight){
+    if (vLeft <= vRight){
+      if (v < vLeft)
+      return vLeft;
+      else if (v > vRight)
+      return vRight;
+      else
+      return v;
+    } else {
+      if (v > vLeft)
+      return vLeft;
+      else if (v < vRight)
+      return vRight;
+      else return v;
+    }
+  }
   
+
+  void changeStartEndV(float startV, float endV, float startRealV, float endRealV){
+    this.startV = startV;
+    this.endV = endV;
+    this.startRealV = startRealV;
+    this.endRealV = endRealV;
+  }
   
+  void printIt(){
+    print("V:"+realV+"\n");
+  }
 }

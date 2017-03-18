@@ -7,30 +7,31 @@ int ybase = 55;
 float A = 50, M = 50;
 
 Smoother attSm = new Smoother(), medSm = new Smoother();
-SmootherTimer arcsAdding;
+//SmootherTimer arcsAdding;
 
 ImagePlastic vasa, leftFace, rightFace, vasaWhite;
 StageController stage;
 EEGEmulator eeg = new EEGEmulator();
 ScreenNotification notify = new ScreenNotification();
 
+
 void setup(){
-  size(500,500);
+  size(800,500);
   noFill();
-  
-  stage = new StageController(); 
+
+  stage = new StageController();
   img = loadImage("tusion_logo.png");
   imgWhite = loadImage("tusion_logo_white.png");
   imgLF = loadImage("leftFace.png");
   imgRF = loadImage("rightFace.png");
-  
+
   vasa = new ImagePlastic(img,img_x,img_y,img_width,img_height,100);
   leftFace = new ImagePlastic(imgLF,img_x,img_y,img_width,img_height,200);
   rightFace = new ImagePlastic(imgRF,img_x,img_y,img_width,img_height,200);
-  
+
   bounds = new ArrayList<PointBound>();
   //arcsAdding = new SmootherTimer(30, 2, 0, 100, 1); // we need only second param and last param here
-  
+
   vasaCenX = img_x + img_width/2;
 }
 
@@ -38,7 +39,7 @@ int xcen_left=80, xcen_right=140;
 int ycen=210;
 int vasaCenX;
 
-int img_x=10, img_y=10, img_width=410, img_height=410;
+int img_x=200, img_y=10, img_width=410, img_height=410;
 
 boolean speed_balance = false;
 boolean bounds_balance = false;
@@ -47,62 +48,69 @@ void draw(){
   eeg.update(A,M);
   A = eeg.A;
   M = eeg.M;
-  
-  attSm.addV(A);
-  medSm.addV(M);
-  
+
+  attSm.add(A);
+  medSm.add(M);
+
+  if (stage.focusVase())
+    arcs.addV(A);
+  else
+    arcs.addV(M);
+
   background(255);
   color c = color(255, 204, 0);
   color(c);
-  
+
   stage.draw();
   stage.update();
-  
+
 
   //vasa.loop();
   //noTint();
   //image(img, img_x, img_y, img_width, img_height);
-  stroke(c); 
-  
-  
-  //fill(255 - vasa.oppacity);
+  stroke(c);
+
+
+  fill(255 - vasa.oppacity);
   //noFill();
   for(int i =0; i<bounds.size();i++)
     {
       bounds.get(i).draw();
       bounds.get(i).update();
-      bounds.get(i).c = color(vasa.oppacity);
+      if (stage.influenceOppacity)
+        bounds.get(i).c = color(vasa.oppacity);
     }
-    
+
  if (speed_balance){
    start_speed_relax();
  }
- 
+
  if (bounds_balance){
    start_balance_bounds();
  }
- 
+
  if (stage.nextLevel(A, M)){
    stage.levelChanged = false;
-   
+
    print("LEVEL CHANGED ! " + "A:"+A + " M:"+ M + " - " + stage.level + "\n");
+   print("FOCUS FACE:" + stage.focusFace()+ " --: FOCUS VASE:" +stage.focusVase()+"\n");
  }
  notify.draw();
 }
 
 ArrayList<PointBound> bounds;
 float b1=HALF_PI,b2=PI;
-float step=0.01; 
+float step=0.01;
 
 void draw_arc_line(){
   arc(110, ycen, 60, 20, b1, b2);
-  
+
   if (b1 < PI)
     b1 += step;
-  
+
   if (b2 < PI)
     b2 += step;
-  
+
   if (b1 >= PI){
     b1 = 0;
     b2 = HALF_PI;
@@ -110,22 +118,7 @@ void draw_arc_line(){
 }
 
 
-PointBound add_arc(int xcen, int ycen, int w, int h, float step){
-  
-  PointBound pb = new PointBound();
-  pb.xcen = xcen;
-  pb.ycen = ycen;
-  pb.w = w;
-  pb.h = h;
-  pb.b1 = 0;
-  pb.b2 = HALF_PI;
-  pb.step = step;
-  pb.c = color(round(random(255)), round(random(255)), round(random(255)));
-  pb.c = color(255, 255, 255);
-  pb.sw = round(1+random(1));
-  
-  return pb;
-}
+
 
 float t=0;
 void mousePressed() {
@@ -143,15 +136,15 @@ void start_speed_relax(){
       speed += bounds.get(i).step;
       //bounds.get(i).update();
     }
-    
+
     speed = speed / bounds.size();
     print(speed + "-sp-");
     if(speed<0)
       speed = - speed;
     avg_speed = speed;
-    
+
   }
-  
+
   for(int i =0; i<bounds.size();i++)
     {
       bounds.get(i).step = to_speed(avg_speed, avg_speed - bounds.get(i).step, 0.00001);
@@ -162,27 +155,27 @@ void start_speed_relax(){
 float to_speed(float to_speed, float cur_speed, float iter){
   if (abs(cur_speed - to_speed) <= iter)
      return to_speed;
-     
+
   if (cur_speed > to_speed)
     return cur_speed - iter;
-  else  
+  else
     return cur_speed + iter;
 }
 
 void start_balance_bounds(){
-  
-  float b1 = 0; 
+
+  float b1 = 0;
   float b2 = 0;
-  
+
   for(int i =0; i<bounds.size();i++)
   {
     b1 += bounds.get(i).b1;
     b2 += bounds.get(i).b2;
   }
-  
+
   b1 = b1 / bounds.size();
   b2 = b2 / bounds.size();
-  
+
   for(int i =0; i<bounds.size();i++)
     {
       bounds.get(i).b1 = to_speed(b1, bounds.get(i).b1, 0.01);
@@ -191,7 +184,7 @@ void start_balance_bounds(){
 }
 
 void set_width_stroke(int sw){
-  
+
   for(int i =0; i<bounds.size();i++)
   {
     bounds.get(i).sw = sw;
@@ -200,7 +193,7 @@ void set_width_stroke(int sw){
 
 float setVal(float p, float add, float def){
   float newVal = p+add;
-  
+
   if (def<=0){
     if (newVal<def)
       return def;
@@ -210,7 +203,7 @@ float setVal(float p, float add, float def){
     if (newVal>=def)
       return def;
     else return newVal;
-  
+
   return def;
 }
 
@@ -229,7 +222,7 @@ void keyReleased()
     print ("A:"+A + " M:"+M + "\n");
   }
   if (key == 'b') {
-    AddRandArcs(10);
+    AddRandArcs(10,0.02);
     print("b");
   } else
   if (key == 'd') {
@@ -237,40 +230,40 @@ void keyReleased()
     print("d");
   } else
   if (key == 's') {
-    speed_balance = true;    
+    speed_balance = true;
   } else
   if (key == 'S') {
-    speed_balance = false;    
+    speed_balance = false;
   } else
   if (key == 'a') {
-    bounds_balance = true;    
+    bounds_balance = true;
   } else
   if (key == 'A') {
-    bounds_balance = false;    
+    bounds_balance = false;
   } else
   if (key == 'f') {
-    set_width_stroke(4);    
+    set_width_stroke(4);
   } else
   if (key == '1') {
-    stage.toStage = 1;    
+    stage.toStage = 1;
   } else
   if (key == '2') {
-    stage.toStage = 2;    
+    stage.toStage = 2;
   } else
   if (key == '3') {
-    stage.toStage = 3;    
+    stage.toStage = 3;
   } else
   if (key == '4') {
-    stage.toStage = 4;    
+    stage.toStage = 4;
   } else
   if (key == '5') {
-    stage.toStage = 5;    
+    stage.toStage = 5;
   } else
   if (key == '6') {
-    stage.toStage = 6;    
+    stage.toStage = 6;
   }
-  
-  
+
+
 }
 
 void exit() {
