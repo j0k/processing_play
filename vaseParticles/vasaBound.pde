@@ -134,16 +134,16 @@ void drawAllBounds(){
   if (!stopAll){ 
     if (boundT.itsDurationEnough(millis())){
       
-      levelVase +=  levelVaseStep * levelDir;
+      //levelVase +=  levelVaseStep * levelDir;
     }
     
     
     if(levelVase>1){
-      levelVase = 1 - levelVaseStep;
-      levelDir = -levelDir;
+      //levelVase = 1 - levelVaseStep;
+      //levelDir = -levelDir;
     } else if (levelVase<0){
-      levelVase = 0 + levelVaseStep;
-      levelDir = -levelDir;
+      //levelVase = 0 + levelVaseStep;
+      //levelDir = -levelDir;
     } 
   }
     

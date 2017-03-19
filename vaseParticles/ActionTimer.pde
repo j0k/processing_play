@@ -34,6 +34,10 @@ class ActionTimer{
     
   }
   
+  void setDuration(float dt){
+    this.duration = dt;
+  }
+  
   boolean isOver(){
     if (( liveTimeMax != -1) && ((millis() - liveTimeStart) >liveTimeMax)){
       return true;

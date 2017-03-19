@@ -1,11 +1,15 @@
-/* OpenProcessing Tweak of *@*http://www.openprocessing.org/sketch/17163*@* */
+/* OpenProcessing Tweak of *@* http://www.openprocessing.org/sketch/17163 *@* */
 /* !do not delete the line above, required for linking your tweak if you upload again */
+
+int topPhys = 0;
+int physHeight = 0;
+
 class particle{
   PVector x;
   PVector v;
   PVector f;
   particle(){
-    x = new PVector(random(0,width),random(0,height));
+    x = new PVector(random(0,width),random(topPhys,height));
     v = new PVector();
     f = new PVector();
   }
@@ -22,21 +26,48 @@ float suck = 1.30;
 float k = 0.2;
 float c = 0.01;
 
+ValueSmoother smM,smA;
+float lastT = millis(),lastTS = millis(), dt = 100;
+
 void setup(){
   size(400,700);
+  topPhys = (int) (height * 0.1);
+  physHeight = (int)( height * 0.85);
   fill(0,64);
   noStroke();
   particles = new ArrayList();
-  for(int i=0;i<600;i++){
+  for(int i=0;i<300;i++){
     particles.add(new particle());
   }
   initCodeGenerator();
   vaseBoundSetup();
-  
+  initProgressBars();
+  smA = new ValueSmoother(0, 100, 0, 100, 20, dt);
+  smM = new ValueSmoother(0, 100, 0, 100, 20, dt);
 }
 
-
+float M=50,A=50;
+float dtSpeedGen = 20;
 void draw(){
+  if ((millis() - lastT) > dt)
+  {
+    lastT = millis();
+    smA.addV(A);
+    smA.getV();
+    
+    smM.addV(M);
+    smM.getV();
+    
+  }
+  
+  smA.getV();
+  smM.getV();
+  ///level = smA.realV;
+  
+  levelVase = map(smA.realV,0,100,0,1);
+  println(dtSpeedGen);
+  dtSpeedGen = 1000 - sq(map(smM.realV,0,100,0,31)) ;
+  pushParticle.setDuration( dtSpeedGen);
   
   //if(frameCount%30==0){println(frameRate);}
 //  background(0);
@@ -93,12 +124,14 @@ void draw(){
       A.f.x -= (A.x.x-width)*k;
       dampen = true;
     };
-    if(A.x.y<0){
-      A.f.y -= A.x.y*k;
+    if(A.x.y<topPhys){
+      A.f.y -= -(topPhys - A.x.y)*k;
       dampen = true;
     };
-    if(A.x.y>height){
-      A.f.y -= (A.x.y-height)*k;
+    
+    int physHeight = (int)( height * 0.85);
+    if(A.x.y>physHeight){
+      A.f.y -= (A.x.y-physHeight)*k;
       dampen = true;
     };
     
@@ -138,6 +171,9 @@ void draw(){
   }
   drawAllBounds();
   pushParticles();
+  
+  drawSettings();
+  updateProgressBars();
 }
 
 boolean stopAll = false;
@@ -151,10 +187,29 @@ void mouseReleased(){
 
 }
 
-void keyPressed() {
+
+void keyReleased()
+{
   if (key == CODED) {
     if (keyCode == UP) {
-      coords.clear();
-    } 
+      A = setVal(A,10,100);
+    } else if (keyCode == DOWN) {
+      A = setVal(A,-10,0);
+    } else if (keyCode == LEFT) {
+      M = setVal(M,-10,0);
+    } else if (keyCode == RIGHT) {
+      M = setVal(M,10,100);
+    }
+    print ("A:"+A + " M:"+M + "\n");
   }
+  
+  if (key == 'b') {
+    smA.changeStartEndV(0,100,0,10);
+    print("b");
+  } else
+  if (key == 'd') {
+    smA.changeStartEndV(40,100,0,300);
+    print("d");
+    coords.clear();
+  } 
 }
