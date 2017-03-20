@@ -1,10 +1,11 @@
 
-class ProgressBar{
+public class ProgressBar{
   int x;
   int y;
   int wi;
   int hi;
   float vmax;
+  boolean printPerc = true;
   
   //int 
   float curValue;
@@ -39,12 +40,12 @@ class ProgressBar{
     int m = 30;
      
     for(int i=0; i<m; i++){
-      int opp = (int) lerpBounds(0,100,((float) i)/m, 0.8, 0.3,1);
+      int opp = (int) lerpBounds(0,60,((float) i)/m, 0.8, 0.3,1);
       //println(opp);
       color c = colorOppacity(bc, opp );
       stroke(c);
       //int rad = (int) map(i,0,m,0,18);
-      int rad = (int) lerpBounds(0,m,((float) i)/m, 0.8,0.5,1);
+      int rad = (int) lerpBounds(0,m/2,((float) i)/m, 0.8,0.5,1);
       //int opp
       // fill(color(0,255 * ((float)i/m),0 * ((float)i/m)));
       //fill(color(0,255 * ((float)i/m),0,100));
@@ -56,8 +57,19 @@ class ProgressBar{
       //tint(255,255,255,255 * ((float)(i/m)));
       ellipse(lerp(this.x, this.x+map(curValue,0,vmax,0,wi), (float)i/m), y, rad, rad);
     }
-    
+    stroke(0);
     fill(0);
+    
+    if(printPerc){
+      rect(x +wi+5, y-7, 30,30);
+      fill(255);
+      textSize(12);
+      int perc = (int) map(curValue,0,1,0,100);
+      text( perc + " %", x + wi+5, y+5);
+      fill(0);
+      //rect(x +wi+5, y-7, 30,30);
+    }
+    
   }
 }
 
@@ -78,13 +90,14 @@ void initProgressBars(){
   for(int i=0; i < bars.length ; i++){
   
   }
-  bars[0] = new ProgressBar(20,(int) (height * 0.94), 120,10,color(0,255,0), color(0,255,0),1);
-  bars[1] = new ProgressBar(210,(int) (height * 0.94), 120,10,color(0,0,255), color(0,0,255),1);
+  bars[0] = new ProgressBar(20,(int) (height * 0.96), 140,10,color(0,255,0), color(0,255,0),1);
+  bars[1] = new ProgressBar(210,(int) (height * 0.96), 140,10,color(0,0,255), color(0,0,255),1);
+  //bars[2] = new ProgressBar(210,(int) (height * 0.94), 100,10,color(0,0,255), color(0,0,255),1);
 }
 
 void updateProgressBars(){
   bars[0].setValue(levelVase);
-  bars[1].setValue(map(dtSpeedGen/1000,0,1,1,0));
+  bars[1].setValue(map(dtSpeedGen/3000,0,1,1,0));
   for(int i=0; i < bars.length ; i++){
     //bars[i].setValue(levelVase);
     //levelVase

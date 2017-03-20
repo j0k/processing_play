@@ -20,11 +20,13 @@ class particle{
   }
 }
 
-ArrayList particles;
+ArrayList<particle> particles;
 float diam = 15;
-float suck = 1.30;  
+float suck = 1.10;  
 float k = 0.2;
 float c = 0.01;
+int oppFillnees = 50;
+int nParts = 200;
 
 ValueSmoother smM,smA;
 float lastT = millis(),lastTS = millis(), dt = 100;
@@ -35,15 +37,17 @@ void setup(){
   physHeight = (int)( height * 0.85);
   fill(0,64);
   noStroke();
-  particles = new ArrayList();
-  for(int i=0;i<300;i++){
+  particles = new ArrayList<particle>();
+  for(int i=0;i<nParts;i++){
     particles.add(new particle());
   }
   initCodeGenerator();
   vaseBoundSetup();
   initProgressBars();
   smA = new ValueSmoother(0, 100, 0, 100, 20, dt);
-  smM = new ValueSmoother(0, 100, 0, 100, 20, dt);
+  smM = new ValueSmoother(0, 100, 0, 10, 20, dt);
+  
+  initPartsCalculation();
 }
 
 float M=50,A=50;
@@ -64,13 +68,15 @@ void draw(){
   smM.getV();
   ///level = smA.realV;
   
-  levelVase = map(smA.realV,0,100,0,1);
-  println(dtSpeedGen);
-  dtSpeedGen = 1000 - sq(map(smM.realV,0,100,0,31)) ;
+  levelVase = map(smA.realV,0,smM.endV,0,1);
+  //println(dtSpeedGen);
+  //we need to use pow and use not sq but 1.3 or 1.2
+  dtSpeedGen = 20 + 2980 - 29.8*sq(map(smM.realV,0,10,0,10)) ;
   pushParticle.setDuration( dtSpeedGen);
   
   //if(frameCount%30==0){println(frameRate);}
 //  background(0);
+  fill(0,0,0,oppFillnees);
   rect(0,0,width,height);
   for(int i=1;i<particles.size();i++){
     particle A = (particle) particles.get(i);
@@ -142,7 +148,9 @@ void draw(){
     
     if(dampen){A.v.mult(0.9);}
     A.update();
-    set(int(A.x.x),int(A.x.y),color(255));
+    stroke(color(255));
+    ellipse(int(A.x.x),int(A.x.y),2,2);
+    //set(int(A.x.x),int(A.x.y),color(255));
   }
   
   for (int i=0;i<LeftBoundX.length;i+=2){
@@ -174,6 +182,10 @@ void draw(){
   
   drawSettings();
   updateProgressBars();
+  
+  updateCalcs();
+  
+
 }
 
 boolean stopAll = false;
