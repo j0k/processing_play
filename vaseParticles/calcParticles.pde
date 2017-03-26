@@ -36,8 +36,13 @@ class CalcParts{
   
   int calcIn(int x, int y, int rad, ArrayList<particle> ps){
     int n = 0;
+    int topHD = calcTopHD(levelVase, vaseTopY, vaseBottomY);
     for(int i=0;i<ps.size();i++){
-      if ((abs(ps.get(i).x.x - x) <= rad) && (abs(y - ps.get(i).x.y) <= rad)){
+      float px = (float) ps.get(i).x.x;
+      float py = (float) ps.get(i).x.y;
+      if (py < (topHD-10))
+        continue;
+      if (dist(x,y,px,py) <= rad/2){
         n++;
         if (!partC[i]){
           partC[i] = true;
@@ -48,7 +53,7 @@ class CalcParts{
     return n;
   }
   
-  int calcIn(Circle area,ArrayList<particle> ps){
+  int calcIn(Circle area, ArrayList<particle> ps){
     return calcIn(area.x, area.y, area.rad, ps);
   }
   
@@ -89,13 +94,13 @@ CalcParts calcParts;
 
 void initPartsCalculation(){
   calcParts = new CalcParts();
-  calcParts.addArea(new Circle(180, 456,150));
-  calcParts.addArea(new Circle(180, 370,90));
-  calcParts.addArea(new Circle(180, 310,130));
+  calcParts.addArea(new Circle(vaseCenterX, 456,156));
+  calcParts.addArea(new Circle(vaseCenterX, 370,90));
+  calcParts.addArea(new Circle(vaseCenterX, 310,130));
 }
 
 void updateCalcs(){
-  calcParts.draw();
+  //calcParts.draw();
   
   calcParts.calcInAllAreas(particles);
   println(calcParts.calculated);

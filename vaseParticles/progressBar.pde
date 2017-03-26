@@ -12,8 +12,10 @@ public class ProgressBar{
   color c;
   
   color bc;
+  String title;
+  int sw;
   
-  ProgressBar(int x,int y, int wi, int hi, color c, color bc, float vmax){
+  ProgressBar(int x,int y, int wi, int hi, color c, color bc, float vmax, String title){
     this.x = x;
     this.y = y;
     this.wi = wi;
@@ -21,6 +23,9 @@ public class ProgressBar{
     this.c = c;
     this.bc = bc;
     this.vmax = vmax;
+    this.title = title;
+    textSize(12);
+    sw = (int) textWidth(title);
   }
   
   public void setValue(float v){
@@ -62,10 +67,14 @@ public class ProgressBar{
     
     if(printPerc){
       rect(x +wi+5, y-7, 30,30);
+
       fill(255);
       textSize(12);
       int perc = (int) map(curValue,0,1,0,100);
       text( perc + " %", x + wi+5, y+5);
+      
+      
+      text( title, x + wi/2 - sw/2, y - 15);
       fill(0);
       //rect(x +wi+5, y-7, 30,30);
     }
@@ -85,19 +94,28 @@ color colorOppacity(color c, int o){
 }
 
 void initProgressBars(){
-  bars = new ProgressBar[2];
+  bars = new ProgressBar[3];
   
   for(int i=0; i < bars.length ; i++){
   
   }
-  bars[0] = new ProgressBar(20,(int) (height * 0.96), 140,10,color(0,255,0), color(0,255,0),1);
-  bars[1] = new ProgressBar(210,(int) (height * 0.96), 140,10,color(0,0,255), color(0,0,255),1);
+  
+  bars[0] = new ProgressBar(20,(int) (height * 0.96), 140,10,color(0,0,255), color(0,0,255),1, "Attention");
+  bars[1] = new ProgressBar(220,(int) (height * 0.96), 140,10,color(0,255,0), color(0,255,0),1, "Meditation");
+  bars[2] = new ProgressBar(20,(int) (height * 0.08), 330,10,color(255,155,0), color(255,155,0),1, "Progress");
   //bars[2] = new ProgressBar(210,(int) (height * 0.94), 100,10,color(0,0,255), color(0,0,255),1);
+  
 }
 
 void updateProgressBars(){
+  //line(width/2,height/2,width/2,height);
   bars[0].setValue(levelVase);
   bars[1].setValue(map(dtSpeedGen/3000,0,1,1,0));
+  
+  int progCalced = calcParts.calculated;
+  if (progCalced > 100)
+    progCalced = 100;
+  bars[2].setValue(map(progCalced,0,100,0,1));
   for(int i=0; i < bars.length ; i++){
     //bars[i].setValue(levelVase);
     //levelVase

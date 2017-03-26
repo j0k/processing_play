@@ -26,11 +26,12 @@ float suck = 1.10;
 float k = 0.2;
 float c = 0.01;
 int oppFillnees = 50;
-int nParts = 200;
+int nParts = 110;
 
 ValueSmoother smM,smA;
 float lastT = millis(),lastTS = millis(), dt = 100;
 
+PShape conctrSVG, medSVG;
 void setup(){
   size(400,700);
   topPhys = (int) (height * 0.1);
@@ -48,6 +49,9 @@ void setup(){
   smM = new ValueSmoother(0, 100, 0, 10, 20, dt);
   
   initPartsCalculation();
+  
+  conctrSVG = loadShape("conctr.svg");
+  medSVG = loadShape("lotus.svg");
 }
 
 float M=50,A=50;
@@ -148,7 +152,11 @@ void draw(){
     
     if(dampen){A.v.mult(0.9);}
     A.update();
-    stroke(color(255));
+    
+    if (calcParts.partVC[i] == 1){
+      stroke(color(255,255,0));
+    }
+    else stroke(color(255));
     ellipse(int(A.x.x),int(A.x.y),2,2);
     //set(int(A.x.x),int(A.x.y),color(255));
   }
@@ -185,7 +193,10 @@ void draw(){
   
   updateCalcs();
   
-
+  shape(conctrSVG, 65, 600-3,50,50);
+  shape(medSVG, 265, 600-3,50,50); 
+  
+  
 }
 
 boolean stopAll = false;

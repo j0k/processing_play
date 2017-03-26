@@ -81,6 +81,19 @@ void calcInVaseBoundLayer(){
   println(vaseHeight);
 }
 
+PVector centerBounds(int[][] bounds){
+  int s = bounds.length;
+  int x=0;
+  int y=0;
+  for(int i = 0; i < s; i++){
+    x += bounds[i][0];
+    y += bounds[i][1];
+  }
+  if (s>0)
+    return new PVector( x/s, y/s);
+  else return new PVector(0,0);
+}
+
 void updateVaseBound(int[][] bounds,int addX, int addY){
   int s = bounds.length;
   
@@ -106,9 +119,15 @@ void updateVaseBounds(int addX, int addY){
 }
 
 int vaseHeight,vaseTopY,vaseBottomY;
+int vaseCenterX;
 void vaseBoundSetup(){
   calcInVaseBoundLayer();
-  updateVaseBounds(10,200);
+  
+  PVector cen = centerBounds(outBottomVaseBound);
+  
+  updateVaseBounds((int) + (width/2 - cen.x),200);
+  cen = centerBounds(outBottomVaseBound);
+  vaseCenterX = (int) cen.x;
   calcInVaseBoundLayer();
 }
 
@@ -168,12 +187,15 @@ void drawAllBounds(){
 }
 
 
-
+int calcTopHD(float p, int topY, int botY){
+  int hd = (int) (p * vaseHeight); //height to draw
+  return botY - hd;
+}
 
 void fillTheDoubleMat(float p, int[][] a, int[][] b, int topY, int botY){
   // p - percent 0 .. 1
-  int hd = (int) (p * vaseHeight); //height to draw
-  int topHD = botY - hd;
+  //int hd = (int) (p * vaseHeight); //height to draw
+  int topHD = calcTopHD(p, topY, botY);//
   // we need to draw botY .. topHD
   
   int s = a.length;
