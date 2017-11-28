@@ -14,12 +14,23 @@ public class Rect{
     fill(c);
     rect(x1,y1,w,h);
   }
+  
+  boolean in(float x, float y){
+    return ((x>=x1) && (x<=x1+w) && (y >=y1) && (y <=y1+h));
+  }
+  
+  boolean mouseIn(){
+    return in(mouseX,mouseY);
+  }
 };
 
 class LiquedRect extends Rect{
-  public float dw;
+  public float dw = 10;
   
-  public float d; //manipulated
+  public float d = 0; //manipulated
+  public float speed = 0; //manipulated
+  
+  public boolean isW = false;
   
   public boolean isControlled=false, isHoriz;
   
@@ -31,7 +42,6 @@ class LiquedRect extends Rect{
     this.dw = dw;
     this.isControlled = isControlled;
     this.isHoriz      = isHoriz;
-    
     this.genRects();
   }
   
@@ -49,32 +59,29 @@ class LiquedRect extends Rect{
           cr = color(0);
         
         
-        float y_1 = (d + i*dw )%w;        
-        float y_2 = (d + (i+1)*dw) %w;
+        float y_1 = (d + i*dw )%h;        
+        float y_2 = (d + (i+1)*dw) %h;
         
-        if (y_2 < y_1){
-          // draw two rects
-        } else         
-        if ((y_1 < 0) && (y_2 > 0)){
-          rs.add(new Rect(x1,h-y_1,w,abs(y_1),c));
-          rs.add(new Rect(x1,h-y_1,w,abs(y_1),c));
-          // 
-        } else {
-          if ((y_1 < 0) && (y_2 < 0)){
-            y_1 = h - y_1;
-            y_2 = h - y_2;
-          }
+        if ((y_1 < 0) && (y_2 < 2)){
+          y_1 = h - abs(y_1);
+          y_2 = h - abs(y_2);
         }
         
-        
-        
-        
-        
-        if (y_2>this.h)
-          y_2 = h;
-                
-        Rect r = new Rect(0.0, y_1, this.w, y_2 - y_1, cr);
-        rs.add(r);
+        if ((y_1 >=0) && (y_2>=0) && (y_1<y_2) && (y_2 <= h)){
+          rs.add(new Rect(0,y_1,w,dw,cr));            
+        }
+        if ((y_1 >=0) && (y_2>=0) && (y_2 < y_1)){
+          rs.add(new Rect(0,y_1,w,h-y_1,cr));
+          rs.add(new Rect(0,0,w,y_2,cr));
+          // draw two rects
+        } else         
+        if ((y_1 <= 0) && (y_2 >= 0)){
+          y_1 = abs(y_1);
+          rs.add(new Rect(0,h-y_1,w,abs(y_1),cr));
+          rs.add(new Rect(0,0,w,y_2,cr));
+          // 
+        } 
+               
       }
       
       if (w/dw > 0){
@@ -84,8 +91,28 @@ class LiquedRect extends Rect{
     
   }
     
+  void update(){
+    if (isW)
+      d += speed;
+    if (speed != 0)
+      genRects();
     
+    if (dtEps()){ 
+      if (mousePressed & mouseIn()){      
+        isW = isW ^ true;
+        upEps();
+      }
+    }
+  }
+  
   void draw(){
+    pushMatrix();
+    translate(x1, y1);
+    for(int i = 0 ; i< rs.size(); i++){
+      rs.get(i).draw();
+      
+    }
+    popMatrix();
     if (isHoriz){
     }
     
