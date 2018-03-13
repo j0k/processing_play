@@ -39,6 +39,8 @@ void draw() {
       coins[i].x = (width/2 - random(width))/1.2;
       coins[i].y = (height/2 - random(height))/1.2;
       eater.rad += 1;
+      
+      eater.touch();
     }
   }
 }

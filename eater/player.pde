@@ -27,6 +27,10 @@ class Player{
     //translate(vx,vy);
     fill(set_color());
     ellipseMode(CENTER);
+    to_activate();
+    print(dws);
+    strokeWeight(dws);
+    stroke(255);
     ellipse(0,0,rad,rad);
     popMatrix();
   }
@@ -41,6 +45,7 @@ class Player{
       if (abs(y)>height/2)
         y = -y;
                  
+      
   }
   
   float r=0, g=0, b=0, dc = 0.1, db = 1;
@@ -60,5 +65,24 @@ class Player{
     b += db;
     
     return color(r,g,b);
+  }
+  
+  float ws, min_ws=1, max_ws=3, dws=0.1;
+  void to_activate(){
+    ws += dws;
+    
+    if (ws >= max_ws)
+        dws = -(abs(dws));
+       
+    if (ws < min_ws){
+        dws = 0;
+        ws = 1;
+    }
+    
+  }
+  
+  void touch(){
+    dws = 0.1;
+    //ws += dws;
   }
 }
