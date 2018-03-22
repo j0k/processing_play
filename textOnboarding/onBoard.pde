@@ -1,4 +1,4 @@
-class TimeTemp implements IUpd{
+class TimeTemp implements IUpd, IReset{
   int Mt; // Max time
   int t = 0 ; // time
   int mt; // Min time
@@ -16,32 +16,42 @@ class TimeTemp implements IUpd{
     active = true;
   }
   
+  void reset(){
+    t = 0;
+    active = false;
+  }
+  
+  TimeTemp(float mt, float Mt){
+    this.Mt = (int) Mt * 1000;
+    this.mt = (int) mt * 1000;
+    this.t = 0;
+  }
+  
   TimeTemp(){
-    Mt = 120 * 1000;
-    mt = 1 * 1000;
+    this.Mt = 20 * 1000;
+    this.mt = 1 * 1000;
+    this.t = 0;
   }
 }
 
-class onBoardElem implements IDraw{
+class onBoardElem extends TimeTemp{
   String txt;
   
   Point2D p; // this choord
   Point2D obj; // to
   onBoard mng; // managing board
   onBoardElem(Point2D p, String txt, Point2D obj, onBoard mng){    
+    super(1 , 15.5);
     this.p = p;
     this.txt = txt;
     this.obj  = obj;
-    this.mng  = mng;
-  }
-  void draw(){
-    
+    this.mng  = mng;    
   }
 }
 
 
 
-class onBoard{
+class onBoard implements IUpd, IReset{
   ArrayList<onBoardElem> elems;
   PFont font;
   
@@ -51,19 +61,42 @@ class onBoard{
   boolean active=true;
   
   Rect r;
-  float perc = 0.3;
+  LerpFloatP perc = new LerpFloatP(0,0.03,1);
+  
   onBoard(){
     // ;;
-    elems = new ArrayList<onBoardElem>(); 
-    
+    elems = new ArrayList<onBoardElem>();     
   }
+  
+  
+  void upd(int dms){
+    if (active && ((elems != null) && (elems.size() > cur)))
+    {
+      onBoardElem e = elems.get(cur);
+      e.upd(dms);
+      
+      if (e.ifExpired())
+      {
+        next();
+      }
+      
+      if (e.obj != null)
+        perc.upd(dms);
+        
+        
+    }       
+  }
+  
   
   void init(){
     if ((elems != null) && (elems.size() > cur)){
       onBoardElem e = elems.get(cur);
+      e.reset();
+      e.active = true;
+      
       Point2D p = (e.p != null) ? e.p : new Point2D(0,0); 
       r = rectTextT1(e.txt, p, symbPerLine);
-      perc = 0.0;
+      perc.reset();
     }
   }
   
@@ -74,9 +107,8 @@ class onBoard{
     if ((elems != null) && (elems.size() > cur)){
       onBoardElem e = elems.get(cur);
       
-      if (e.obj != null){
-        perc = lerp(perc, 1.0, 0.03);
-        lineFromTo(r, e.obj, 1);
+      if (e.obj != null){        
+        lineFromTo(r, e.obj, perc.v);
         //print(nf(perc, 3, 3) + " ");
       }
       
@@ -88,10 +120,15 @@ class onBoard{
     }          
   }
   
+  void reset(){
+     cur = 0;
+     init();
+  }
+  
   void next(){
     if (cur == elems.size() -1){
       //active = false;
-      cur = 0;
+      reset();
       
     } else {
       cur ++;      

@@ -57,6 +57,7 @@ void draw(){
     //circling();
   }
   
+  board.upd(dms);
   board.draw();
 }
 
@@ -132,7 +133,7 @@ void lineFromTo(Point2D p1, Point2D p2, float perc){
   boolean toX = (abs(dx) < abs(dy)) ? true : false; 
   
   int segment = b*2 + r; // 0,1,2,3 (I,II,III,IV) seg
-  float x1=p1.x,x2=0,x3=p2.x,y1=p1.y,y2=0,y3=p2.y;
+  float x1=p1.x, x2=0, x3=p2.x, y1=p1.y, y2=0, y3=p2.y;
   
   if (!toX){ // [to horizon]
    x2 = p1.x + 2.0*(p2.x - p1.x)/3;
@@ -167,8 +168,7 @@ void lineFromTo(Point2D p1, Point2D p2, float perc){
       
       line(x1, y1, x2, y2);
       
-      float pp = ((dA * perc - d1) / d2);
-      print(pp + " ");
+      float pp = ((dA * perc - d1) / d2);      
       
       stroke(color(120,255,120));
       linePerc(x2,y2,x3,y3,pp);
