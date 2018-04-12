@@ -11,7 +11,7 @@ void setup(){
   
   {
     // board init
-    board.symbPerLine = 20;
+      board.symbPerLine = 20;
     
     board.elems.add( new onBoardElem(new Point2D(200,200), "Yes!", new Point2D(0,0), board));
     board.elems.add( new onBoardElem(new Point2D(200,200), "Hellooo a very coooool world!!!! you are sooooo cool!", new Point2D(width,0), board));

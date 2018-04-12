@@ -50,8 +50,7 @@ class Circle extends Point2D{
   Circle(float x, float y, float rad){
     super(x, y);
     this.rad = rad;
-  }
-  
+  }  
 }
 
 abstract class Figure2D<T extends Point2D> extends Point2D implements IDraw{  
