@@ -2,15 +2,18 @@
 
 Manip manip;
 PsyDyn gmetrics;
+PSYExp player;
 void setup(){
   size(600,600);
   
   gmetrics = new PsyDyn(PSY.BASIC);
+  player = new PSYExp();
   manip = new Manip(width/2, height/2, 50);
   
   setupIndicators();
   sceneSetup();
   setupTasks();
+  
 }
 
 Timing time = new Timing();
@@ -31,6 +34,9 @@ void draw(){
   taskUpdate();
   if (timer.on_timer(0,1000)){
     //println(SM.print_status());
+    println(player.str());
+    float[] lpv = to_LPV(player.exp[2]);
+    println(LPV_str(lpv));
   }
   manip.draw();
 }

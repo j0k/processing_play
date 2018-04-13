@@ -16,10 +16,12 @@ void setupTasks(){
   states.add(new State(1, 1, STATE.TRIANGLE));
   states.get(0).set_params(new boolean[]{true}, new int[][]{{STATE.TRIANGLE,STATE.TRIANGLE}});
   states.get(0).ts_cumsum_min = 3000;
+  states.get(0).exp = new PSYExp(5,5,10);
   
   states.add(new State(1, 3, STATE.CIRCLE));  
   states.get(1).set_params(new boolean[]{true}, new int[][]{{STATE.CIRCLE,STATE.CIRCLE}});
   states.get(1).ts_moment_psy_min = 3000;
+  states.get(1).exp = new PSYExp(10,10,10);
   //states.get(1).DEBUG = true;
   
   states.add(new State(1, 2, STATE.RECT));  
@@ -45,6 +47,9 @@ void setupTasks(){
   taskTRCE = new StateMachine(statesA, 0, trans, ftrans);
   taskTRCE.title = "TASKS";
   task_SM = taskTRCE;
+  task_SM.DEBUG_EXP = true;
+  task_SM.player_exp = player;
+  task_SM.player_exp.exp[2] = 100;
 }
 
 PsyDyn task_metrics = new PsyDyn(0);

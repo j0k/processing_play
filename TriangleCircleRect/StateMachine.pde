@@ -8,9 +8,10 @@ class FTransitions {
 };
 
 class StateMachine implements IReset, IUp{
-  boolean DEBUG_TRANS = false;
+  boolean DEBUG_TRANS = false, DEBUG_EXP = false;
   State[] states;
   HashMap<Integer , Integer[]> trans;
+  PSYExp player_exp = null;
   
   String title = "";
   int cur_state = 0;
@@ -27,6 +28,13 @@ class StateMachine implements IReset, IUp{
     this.trans = trans;    
     this.ftrans = ftrans;
   }
+  
+  StateMachine(State[] states, int start_state, HashMap<Integer, Integer[]> trans, FTransitions ftrans, PSYExp player_exp){
+    //  FTransitions ftrans
+    this(states,start_state,trans,ftrans);
+    this.player_exp = player_exp;
+  }
+  
 
   void reset(){    
     for(int i = 0; i < states.length ; i++){
@@ -154,11 +162,30 @@ class StateMachine implements IReset, IUp{
     return -1;
   };
 
+  boolean exp_calc(){
+    
+    if (DEBUG_EXP){
+      println("EXP CALC! " + cs().exp + " : " + player_exp);
+    }
+    if ((cs().exp != null) && (player_exp != null)){
+      cs().exp.add_to(player_exp);
+       //player_exp = player_exp.add(cs().exp);
+      println(cs().exp.str());
+      return true;
+    }
+    else return false;
+  }
+  
   int make_transition(int next_state){
     if (next_state == -1)
       return -1;
     
     ftrans.trans(cur_state, next_state, this);
+    exp_calc();
+    
+    if(DEBUG_EXP && player_exp != null){
+      println(player_exp.str());
+    }
     
     if(DEBUG_TRANS)
       println("go to " + next_state+">");
