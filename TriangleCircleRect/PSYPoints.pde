@@ -62,7 +62,7 @@ float[] to_LPV(float x){
   
   float[] res = new float[3];
   res[0] = pl;
-  res[1] = max(100, 100*d_V1/d_V2);
+  res[1] = min(100, 100*d_V1/d_V2);
   res[2] = x;
   
   return res;
