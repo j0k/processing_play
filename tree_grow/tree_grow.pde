@@ -21,6 +21,7 @@ void setup()
   land = createGraphics(width,height, JAVA2D);
   land.beginDraw();
   land.ellipseMode(CENTER);
+  //land.stroke(80, 0, 50, 200);
   land.stroke(80, 0, 50, 200);
   land.fill(250, 80, 120, 120);
   land.ellipseMode(CENTER);
@@ -44,11 +45,11 @@ void draw()
     c = count;
   
   land.beginDraw();
-  land.background(0);
+  land.background(255);
   if (c == count)
     myTree.swing();
   
-  land.stroke(255, 200);
+  land.stroke(0, 200);
   int tempIndex;
   println(c);
   for(int i = 1; i < c; i ++)
@@ -72,6 +73,7 @@ void draw()
   }
   land.endDraw();
   image(land,0,0);
+  save_it(land);
 }
 
 void mousePressed() {
@@ -330,7 +332,7 @@ void keyPressed() {
 int frame_i = 0;
 void save_it(PGraphics land){
   if (saving){
-    String fn = "save_2\\land_" + nf(frame_i,5,0) + ".png";
+    String fn = "_save\\land_" + nf(frame_i,5,0) + ".png";
     land.save(fn);
     frame_i ++;
     println(fn);
